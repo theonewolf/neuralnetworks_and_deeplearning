@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import random
-
 import numpy as np
 
 def sigmoid(z):
@@ -17,8 +15,9 @@ class Network:
 
         # These sets up the biases and weights for each neuron as arrays.
         # Wolf: I feel like these could just be matrices?
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-        self.weights = [np.random.randn(y, x) for x, y in zip(sizes[:-1], sizes[1:])]
+        self.rng = np.random.default_rng(seed=0)
+        self.biases = [self.rng.standard_normal((y, 1)) for y in sizes[1:]]
+        self.weights = [self.rng.standard_normal((y, x)) for x, y in zip(sizes[:-1], sizes[1:])]
 
     def feedforward(self, a: np.ndarray) -> np.ndarray:
         for b, w in zip(self.biases, self.weights):
@@ -37,7 +36,7 @@ class Network:
         n = len(training_data)
 
         for j in range(epochs):
-            random.shuffle(training_data)
+            self.rng.shuffle(training_data)
             mini_batches = [training_data[k:k+mini_batch_size]
                             for k in range(0, n, mini_batch_size)]
 
