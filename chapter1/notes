@@ -1,0 +1,139 @@
+- Perceptron
+    + Takes in N binary inputs, and produces a single binary output
+    + Output is 0 or 1 if
+        - 1: All N binary inputs multiplied by N weights sum to greater than a threshold
+        - 0: if less than threshold
+    + Weights and threshold value are learned
+
+- Multiple Perceptron layers
+    + First layer takes in input and determines what's important
+    + Second hidden layer can form more complex and abstract decisions
+    + Final layer creates output and final decisions
+
+- Summations and multiplications can be represented as the dot product of vectors (Linear Algebra)
+    + Represent threshold as b = -threshold
+    + b is called bias and determines if the perceptron _fires_
+    + w * x + b > 0 --> 1
+    + w * x + b <= 0 --> 0
+
+- Networks of perceptrons can compute any logical function
+    + Because they can represent a NAND gate
+    + And any computation can be represented by NAND gates
+
+- Perceptrons are conceptually simple, but hard to update in a learning algorithm
+    + Changing weights even slightly can cause a perceptron to fire or not fire
+    + That single new 1 or 0 output might fix one case
+    + But, typically drastically changes outcome for many other cases
+
+- We need a method of gradually changing the network
+
+- Sigmoid neuron
+    + Small changes in weights and bias cause small changes in output
+    + Inputs x_1, x_2, ..., x_i
+    + Values [0,1] any value
+    + Weights w_1, w_2, ..., w_i
+    + Overall bias b
+    + Output is
+        sigmoid(w * x + b)
+    + Also called the logistic function, and logistic neurons
+
+- Sigmoid is a smooth (differentiable) step function
+    + Perceptrons are step functions
+
+- The fact that the sigmoid is differentiable (smooth) is why it works
+    + Nothing is special about the sigmoid function itself
+    + It just mimics a continuous, differentiable step function
+
+- Review partial derivative equation later
+
+- Important part: change in output is a _linear function_ of changes in weights and bias
+    + This enables algorithms to choose small changes in weights and biases, that achieve
+      the desired output changes
+
+- Sigmoid is called the _activation function_ for neural networks
+    + Others can be used, but exponentials behave nicely with differentiation
+
+- Neural network layer names
+    + Input layer, with input neurons
+    + Output layer with output neurons
+    + Middle layers are called hidden layers
+        - Neither input, nor output
+
+- Multiple layer networks, even with sigmoid, are sometimes referred to as MLP
+    + Mulilayer perceptrons
+
+- Natural way to design networks is 1-1 mapping to inputs and outputs
+    + 64x64 image, has 4,096 input neurons (64 * 64)
+        - Grayscaled, so input is intensity value [0,1]
+    + Output layer could be just 1 to classify 9 or not 9
+        - Binary classification only requires one output
+        - > 0.5 is a 9
+        - <= 0.5 not a 9
+
+- Design of input and output is usually straightforward
+    + Hidden layers take all the work in architecting
+
+- Neural networking researchers use a lot of heuristics in designing hidden layers
+    + But, design should be automated (neural architecture search, NAS)
+
+- Feedforward neural networks: where the output of one layer is used as input to the
+  next layer with no _loops_ in the network
+    + Information always goes forwards, never backwards
+    + If we loop, the input of the sigmoid function would depend on its output
+        - This is "hard to make sense of, and so we don't allow such loops"
+            + I believe he means this is hard to differentiate
+
+- Recurrent neural networks: feedback loops are possible
+    + This can cascade neurons firing for a period of time
+    + Output affects input at a later time t, not instantaneously
+
+- RNNs have been less influential because learning algorithms are less scalable
+    + They are much closer "in spirit" to how the brain works
+
+- Recognizing handwritten digits
+    1. Segment the image into parts with digits
+        + Not solved in chapter 1 yet
+        + One could use simple stride / slicing the image
+    2. Classify each individual image into a digit
+        + Solution idea
+        + 3-layer neural network
+            - 28 x 28 input (768 neurons)
+            - [0.0, 1.0] [black, white]
+            - Second layer is hidden layer, various values of n
+            - Output layer is 10 neurons for 0-9
+                + Encoding into 4 "bit" neurons information theoretically works
+                    - Practice doesn't work yet, learning algorithms have trouble associating multiple hidden layers to a bit
+
+
+- Learning with Gradient Descent
+    + We first must define a cost function, or loss function, or objective function
+        - C(w,b) = (1/2n) * sum(||y(x) - a||^2) for all x input training vectors
+        - ||v|| is the length function
+        - C is called the _quadratic loss_ function also called mean squared error (MSE)
+    + Quadratic loss (MSE) is always positive, and close to 0 when correct
+        - This means our job is to minimize the cost as a function of weights and biases
+    + Minimization
+        - We compute derivatives of C and understand if we are moving in a positive or negative direction towards the global minimum
+    + Change in weights and biases is equal to - eta * change in cost function
+        - Computable with derivatives
+    + Simple equation to do this
+        - v' = v - eta * delta C
+    + delta C is the _gradient_
+
+    + True gradient descent requires computation over all training vectors
+    + This is slow
+    + Stochastic gradient descent -- chooses some random training vectors and estimates delta C
+
+    + The randomly picked vectors are called a "mini-batch"
+    + Go over all training inputs through these batches, and that forms an _epoch_
+    + Batch size of 1 is "online" or "incremental" learning where you learn from a single example at a time, and update weights + biases
+        - Using the same gradient descent calculation
+
+- Validation set: used to set hyper-parameters which are not _learned_ or selected by the learning algorithm
+    + These are configuration of the learning algorithm itself
+    + One can have a meta-algorithm to figure out hyper-parameters with the validation set
+        - It is really just an optimization problem (all of it, all the way down)
+
+- Backpropagation algorithm: fast way of computing the gradient of the cost function
+    + Update weights and biases based on this computation across the network
+    + Explained in Chapter 2
