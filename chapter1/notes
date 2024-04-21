@@ -137,3 +137,7 @@
 - Backpropagation algorithm: fast way of computing the gradient of the cost function
     + Update weights and biases based on this computation across the network
     + Explained in Chapter 2
+
+- We can think of deep neural networks and their layers as decomposing problems into sub-questions down to the level of individual pixels
+    + Thus, there is structure hidden in the weights and biases of answering such sub-questions which help solve the larger question
+    + Wolf Conjecture: It is this structure that can generalize and helps training new neural networks.
